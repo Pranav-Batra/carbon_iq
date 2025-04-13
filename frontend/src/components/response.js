@@ -221,7 +221,7 @@ useEffect(() => {
             <CardTitle className="text-2xl text-green-700 dark:text-green-300 flex justify-between items-center">
               <span>Your Carbon Footprint Dashboard</span>
               <span className="text-lg font-normal text-green-600 dark:text-green-400">
-                Last Updated: May 2025
+                Last Updated: April 2025
               </span>
             </CardTitle>
           </CardHeader>
