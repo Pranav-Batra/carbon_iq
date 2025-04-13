@@ -7,6 +7,7 @@ import { HeroHighlight, Highlight } from './hero';
 import { LineChart, Line, BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, PieChart, Pie, Cell, Legend, ComposedChart, ReferenceLine, ReferenceArea } from 'recharts';
 import { useCohereGenerate } from '@/api/api';
 import { useBreakdownPie } from '@/api/api';
+
 const getIntervalForValue = (value) => {
   const intervals = [
     [0, 900],
@@ -42,11 +43,8 @@ export function CarbonFootprintDashboard() {
 
   const { submitBreakdown, isLoading: breakLoading, error, response} = useBreakdownPie();
 
-
-
   const router = useRouter();
   
-
   useEffect(() => {
     const cachedResponse = localStorage.getItem('surveyResponse');
     const cachedAnswers = localStorage.getItem('carbonSurveyAnswers');
@@ -86,9 +84,8 @@ export function CarbonFootprintDashboard() {
       console.log('Updated answerData: ', answerData);
       submitBreakdown(answerData)
     }
-    
-   
   }, [answerData]);
+  
   useEffect(() => {
     if (response && Object.keys(response).length > 0) {
       console.log("breakdown response: ", response);
@@ -103,8 +100,7 @@ export function CarbonFootprintDashboard() {
     }
   }, [response]);
 
-
-useEffect(() => {
+  useEffect(() => {
     if (answerData) {
       const formattedPrompt = `
   You are a helpful assistant that gives actionable, eco-friendly tips based on user lifestyle data.
@@ -200,17 +196,21 @@ useEffect(() => {
     { range: '8100-9000', count: 1 },
   ];
 
-
-
   const comparisonData = [
     { name: 'Your Footprint', value: graphData.result },
-
     { name: 'Global Avg', value: graphData.comparison.globalAvg },
   ];
   
-
   const COLORS = ['#4CAF50', '#8BC34A', '#CDDC39', '#AFB42B'];
   const userInterval = getIntervalForValue(graphData.result);
+
+  // Define tabs for better organization
+  const tabs = [
+    { id: 'overview', label: 'Overview' },
+    { id: 'breakdown', label: 'Breakdown' },
+    { id: 'comparison', label: 'Comparison' },
+    { id: 'tips', label: 'Tips' }
+  ];
 
   return (
     <div className="w-full max-w-6xl mx-auto mt-6 p-4">
@@ -218,7 +218,7 @@ useEffect(() => {
         {/* Header Card */}
         <Card className="border border-green-200 dark:border-green-800 shadow-md">
           <CardHeader className="bg-green-50 dark:bg-green-900/30">
-            <CardTitle className="text-2xl text-green-700 dark:text-green-300 flex justify-between items-center">
+            <CardTitle className="text-2xl text-green-700 dark:text-green-300 flex flex-col sm:flex-row justify-between items-center">
               <span>Your Carbon Footprint Dashboard</span>
               <span className="text-lg font-normal text-green-600 dark:text-green-400">
                 Last Updated: April 2025
@@ -233,35 +233,21 @@ useEffect(() => {
                 </h2>
                 <p className="text-gray-600 dark:text-gray-400">Your annual carbon footprint</p>
               </div>
-              <div className="flex space-x-2">
-                <Button 
-                  onClick={() => setActiveTab('overview')} 
-                  variant={activeTab === 'overview' ? "default" : "outline"}
-                  className={activeTab === 'overview' ? "bg-green-600 hover:bg-green-700" : "border-green-300 text-green-700 hover:bg-green-50 dark:border-green-800 dark:text-green-400 dark:hover:bg-green-900/30"}
-                >
-                  Overview
-                </Button>
-                <Button 
-                  onClick={() => setActiveTab('breakdown')} 
-                  variant={activeTab === 'breakdown' ? "default" : "outline"}
-                  className={activeTab === 'breakdown' ? "bg-green-600 hover:bg-green-700" : "border-green-300 text-green-700 hover:bg-green-50 dark:border-green-800 dark:text-green-400 dark:hover:bg-green-900/30"}
-                >
-                  Breakdown
-                </Button>
-                <Button 
-                  onClick={() => setActiveTab('comparison')} 
-                  variant={activeTab === 'comparison' ? "default" : "outline"}
-                  className={activeTab === 'comparison' ? "bg-green-600 hover:bg-green-700" : "border-green-300 text-green-700 hover:bg-green-50 dark:border-green-800 dark:text-green-400 dark:hover:bg-green-900/30"}
-                >
-                  Comparison
-                </Button>
-                <Button 
-                  onClick={() => setActiveTab('tips')} 
-                  variant={activeTab === 'tips' ? "default" : "outline"}
-                  className={activeTab === 'tips' ? "bg-green-600 hover:bg-green-700" : "border-green-300 text-green-700 hover:bg-green-50 dark:border-green-800 dark:text-green-400 dark:hover:bg-green-900/30"}
-                >
-                  Tips
-                </Button>
+              
+              {/* Responsive tab navigation */}
+              <div className="grid grid-cols-2 sm:flex sm:space-x-2 gap-2 w-full sm:w-auto">
+                {tabs.map(tab => (
+                  <Button 
+                    key={tab.id}
+                    onClick={() => setActiveTab(tab.id)} 
+                    variant={activeTab === tab.id ? "default" : "outline"}
+                    className={`text-xs sm:text-sm ${activeTab === tab.id ? 
+                      "bg-green-600 hover:bg-green-700" : 
+                      "border-green-300 text-green-700 hover:bg-green-50 dark:border-green-800 dark:text-green-400 dark:hover:bg-green-900/30"}`}
+                  >
+                    {tab.label}
+                  </Button>
+                ))}
               </div>
             </div>
           </CardContent>
@@ -278,29 +264,28 @@ useEffect(() => {
                 Compare your carbon usage with others!
               </p>
               <div className="h-64 w-full">
-              <ResponsiveContainer width="100%" height={300}>
-    <ComposedChart data={histogramData}>
-        <CartesianGrid strokeDasharray="3 3" />
-        <XAxis dataKey="range" />
-        <YAxis />
-        <Tooltip />
-        <Bar dataKey="count" fill="#4CAF50" />
-        {/* Reference Line for User Interval */}
-        <ReferenceLine
-            x={userInterval}
-            stroke="#4CAF50"
-            label={{ value: 'You', position: 'top', fill: '#4CAF50' }}
-        />
-        {/* Shaded Area to Highlight the User Interval */}
-        <ReferenceArea
-            x1={userInterval - 2}  // Adjust x1 and x2 to match the desired interval
-            x2={userInterval + 2}
-            fill="#6a329f"
-            fillOpacity={0.3}
-        />
-    </ComposedChart>
-</ResponsiveContainer>
-
+                <ResponsiveContainer width="100%" height={300}>
+                  <ComposedChart data={histogramData}>
+                    <CartesianGrid strokeDasharray="3 3" />
+                    <XAxis dataKey="range" />
+                    <YAxis />
+                    <Tooltip />
+                    <Bar dataKey="count" fill="#4CAF50" />
+                    {/* Reference Line for User Interval */}
+                    <ReferenceLine
+                        x={userInterval}
+                        stroke="#4CAF50"
+                        label={{ value: 'You', position: 'top', fill: '#4CAF50' }}
+                    />
+                    {/* Shaded Area to Highlight the User Interval */}
+                    <ReferenceArea
+                        x1={userInterval - 2}  // Adjust x1 and x2 to match the desired interval
+                        x2={userInterval + 2}
+                        fill="#6a329f"
+                        fillOpacity={0.3}
+                    />
+                  </ComposedChart>
+                </ResponsiveContainer>
               </div>
               <div className="mt-6 p-4 bg-green-50 dark:bg-green-900/20 rounded-md border border-green-200 dark:border-green-800">
                 <h3 className="text-lg font-medium text-green-700 dark:text-green-300 mb-2">Environmental Impact</h3>
@@ -385,40 +370,41 @@ useEffect(() => {
               <div className="mt-6 p-4 bg-green-50 dark:bg-green-900/20 rounded-md border border-green-200 dark:border-green-800">
                 <h3 className="text-lg font-medium text-green-700 dark:text-green-300 mb-2">Your Standing</h3>
                 <p className="text-gray-600 dark:text-gray-400">
-                  Your footprint is <span className="font-semibold text-green-600 dark:text-green-400">{((graphData.result / 4600) * 100).toFixed(2) }%</span> the global average!!
+                  Your footprint is <span className="font-semibold text-green-600 dark:text-green-400">{((graphData.result / 4600) * 100).toFixed(2) }%</span> of the global average!
                 </p>
               </div>
             </CardContent>
           </Card>
         )}
 
-{activeTab === 'tips' && (
-  <Card className="border border-green-200 dark:border-green-800 shadow-md">
-    <CardHeader className="bg-green-50 dark:bg-green-900/30">
-      <CardTitle className="text-xl text-green-700 dark:text-green-300">
-        Personalized Carbon Reduction Tips
-      </CardTitle>
-    </CardHeader>
-    <CardContent className="pt-6">
-      {tipsLoading ? (
-        <div className="animate-pulse text-gray-500 dark:text-gray-400">Generating tips...</div>
-      ) : tipsData ? (
-        <div>
-          <ul className="list-disc pl-6 space-y-2 text-green-800 dark:text-green-300">
-            {tipsData.reductionTips.map((tip, i) => (
-              <li key={i}>{tip}</li>
-            ))}
-          </ul>
-          <p className="mt-4 italic text-sm text-gray-600 dark:text-gray-400">
-            {tipsData.impactSummary}
-          </p>
-        </div>
-      ) : (
-        <p className="text-gray-500 dark:text-gray-400">No tips available yet.</p>
-      )}
-    </CardContent>
-  </Card>
-)}
+        {activeTab === 'tips' && (
+          <Card className="border border-green-200 dark:border-green-800 shadow-md">
+            <CardHeader className="bg-green-50 dark:bg-green-900/30">
+              <CardTitle className="text-xl text-green-700 dark:text-green-300">
+                Personalized Carbon Reduction Tips
+              </CardTitle>
+            </CardHeader>
+            <CardContent className="pt-6">
+              {tipsLoading ? (
+                <div className="animate-pulse text-gray-500 dark:text-gray-400">Generating tips...</div>
+              ) : tipsData ? (
+                <div>
+                  <ul className="list-disc pl-6 space-y-2 text-green-800 dark:text-green-300">
+                    {tipsData.reductionTips.map((tip, i) => (
+                      <li key={i}>{tip}</li>
+                    ))}
+                  </ul>
+                  <p className="mt-4 italic text-sm text-gray-600 dark:text-gray-400">
+                    {tipsData.impactSummary}
+                  </p>
+                </div>
+              ) : (
+                <p className="text-gray-500 dark:text-gray-400">No tips available yet.</p>
+              )}
+            </CardContent>
+          </Card>
+        )}
+
         {/* Action buttons */}
         <div className="flex flex-col sm:flex-row sm:justify-between gap-4">
           <Button 
@@ -427,7 +413,6 @@ useEffect(() => {
           >
             Take Survey Again
           </Button>
-          
         </div>
       </div>
     </div>

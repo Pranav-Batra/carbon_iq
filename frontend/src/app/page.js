@@ -1,14 +1,14 @@
-"use client";
-import { motion } from "framer-motion";
-import { useRouter } from "next/navigation";
-import { HeroHighlight, Highlight } from "../components/hero";
+"use client"
+import { motion } from "framer-motion"
+import { useRouter } from "next/navigation"
+import { HeroHighlight, Highlight } from "../components/hero"
 
 export default function Home() {
-  const router = useRouter();
+  const router = useRouter()
 
   const navigateToForm = () => {
-    router.push("/form");
-  };
+    router.push("/form")
+  }
 
   return (
     <div className="flex flex-col w-full">
@@ -21,13 +21,10 @@ export default function Home() {
             transition={{ duration: 0.5, ease: [0.4, 0.0, 0.2, 1] }}
             className="text-2xl md:text-4xl lg:text-5xl font-bold text-neutral-700 dark:text-white max-w-4xl leading-relaxed lg:leading-snug text-center mx-auto"
           >
-            Discover your{" "}
-            <Highlight className="text-green-600 dark:text-green-300">
-              Environmental Footprint
-            </Highlight>{" "}
+            Discover your <Highlight className="text-green-600 dark:text-green-300">Environmental Footprint</Highlight>{" "}
             and make sustainable choices.
           </motion.h1>
-          
+
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
@@ -50,35 +47,36 @@ export default function Home() {
           <h2 className="text-3xl font-bold text-center mb-8 text-neutral-800 dark:text-white">
             About Our Environmental Footprint App
           </h2>
-          
+
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
             <div className="p-6 bg-green-50 dark:bg-green-900/20 rounded-lg">
               <h3 className="text-xl font-semibold mb-3 text-green-700 dark:text-green-300">Track Your Impact</h3>
               <p className="text-neutral-700 dark:text-neutral-300">
-                Our app helps you understand your personal environmental impact through easy-to-use tracking tools and personalized recommendations.
+                Our app helps you understand your personal environmental impact through easy-to-use tracking tools and
+                personalized recommendations.
               </p>
             </div>
-            
+
             <div className="p-6 bg-green-50 dark:bg-green-900/20 rounded-lg">
               <h3 className="text-xl font-semibold mb-3 text-green-700 dark:text-green-300">Make Informed Choices</h3>
               <p className="text-neutral-700 dark:text-neutral-300">
-                Learn how your daily decisions affect the planet and discover simple ways to reduce your carbon footprint while saving money.
+                Learn how your daily decisions affect the planet and discover simple ways to reduce your carbon
+                footprint while saving money.
               </p>
             </div>
-            
+
             <div className="p-6 bg-green-50 dark:bg-green-900/20 rounded-lg">
               <h3 className="text-xl font-semibold mb-3 text-green-700 dark:text-green-300">Join a Community</h3>
               <p className="text-neutral-700 dark:text-neutral-300">
-                Connect with like-minded individuals who are committed to making a positive impact on our environment through sustainable living.
+                Connect with like-minded individuals who are committed to making a positive impact on our environment
+                through sustainable living.
               </p>
             </div>
           </div>
-          
-          <div className="mt-12 text-center">
-           
-          </div>
+
+          <div className="mt-12 text-center"></div>
         </div>
       </section>
     </div>
-  );
+  )
 }
